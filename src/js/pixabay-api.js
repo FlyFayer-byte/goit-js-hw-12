@@ -1,9 +1,8 @@
-// src/js/pixabay-api.js
 import axios from 'axios';
 
 const API_KEY = import.meta.env.VITE_PIXABAY_KEY;
 const BASE_URL = 'https://pixabay.com/api/';
-export const PER_PAGE = 15;
+const PER_PAGE = 15;
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -17,7 +16,7 @@ const api = axios.create({
 });
 
 /**
- * Повертає data з відповіді Pixabay для query та page.
+ * Get images by query and page. Returns `data` from Pixabay response.
  * @param {string} query
  * @param {number} page
  * @returns {Promise<Object>} data
@@ -27,3 +26,5 @@ export async function getImagesByQuery(query, page = 1) {
   const { data } = await api.get('', { params: { q, page } });
   return data;
 }
+
+export { PER_PAGE };
