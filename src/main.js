@@ -59,7 +59,6 @@ async function onSearch(e) {
 
     createGallery(data.hits);
 
-    // show load more if there are more items
     const shown = data.hits.length + (currentPage - 1) * PER_PAGE;
     if (shown < totalHits) {
       showLoadMoreButton();
@@ -75,7 +74,6 @@ async function onSearch(e) {
 }
 
 async function onLoadMore() {
-  // disable button while loading
   loadMoreBtn.disabled = true;
   showLoader();
 
@@ -91,7 +89,6 @@ async function onLoadMore() {
 
     createGallery(data.hits);
 
-    // smooth scroll: get height of one card
     const firstCard = galleryEl.querySelector('.gallery-item');
     if (firstCard) {
       const { height } = firstCard.getBoundingClientRect();
@@ -101,7 +98,6 @@ async function onLoadMore() {
       });
     }
 
-    // check if we reached the end
     const shown = currentPage * PER_PAGE;
     if (shown >= (data.totalHits ?? 0)) {
       hideLoadMoreButton();
