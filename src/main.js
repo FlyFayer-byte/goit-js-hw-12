@@ -1,6 +1,7 @@
 // src/main.js
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
+
 import { getImagesByQuery, PER_PAGE } from './js/pixabay-api.js';
 import {
   createGallery,
@@ -9,6 +10,7 @@ import {
   hideLoader,
   showLoadMoreButton,
   hideLoadMoreButton,
+  getFirstCardHeight,
 } from './js/render-functions.js';
 
 const form = document.querySelector('#search-form');
@@ -25,13 +27,18 @@ iziToast.settings({
   closeOnClick: true,
 });
 
+// При старті: ховаємо кнопку
+if (typeof hideLoadMoreButton === 'function') {
+  hideLoadMoreButton();
+}
+
 form.addEventListener('submit', onSearch);
 if (loadMoreBtn) loadMoreBtn.addEventListener('click', onLoadMore);
 
 async function onSearch(e) {
   e.preventDefault();
-
   const query = e.currentTarget.elements['search-text'].value.trim();
+
   if (!query) {
     iziToast.warning({ message: 'Please enter a search term' });
     return;
@@ -74,6 +81,9 @@ async function onSearch(e) {
 }
 
 async function onLoadMore() {
+  if (!currentQuery) return;
+  if (!loadMoreBtn) return;
+
   loadMoreBtn.disabled = true;
   showLoader();
 
@@ -89,17 +99,18 @@ async function onLoadMore() {
 
     createGallery(data.hits);
 
-    const firstCard = galleryEl.querySelector('.gallery-item');
-    if (firstCard) {
-      const { height } = firstCard.getBoundingClientRect();
+    // Плавний скрол — на дві висоти картки
+    const cardHeight = getFirstCardHeight();
+    if (cardHeight > 0) {
       window.scrollBy({
-        top: height * 2,
+        top: cardHeight * 2,
         behavior: 'smooth',
       });
     }
 
-    const shown = currentPage * PER_PAGE;
-    if (shown >= (data.totalHits ?? 0)) {
+    // Визначаємо, чи кінець колекції досягнуто
+    const totalShown = currentPage * PER_PAGE;
+    if (totalShown >= (data.totalHits ?? totalHits)) {
       hideLoadMoreButton();
       iziToast.info({ message: "We're sorry, but you've reached the end of search results." });
     } else {
