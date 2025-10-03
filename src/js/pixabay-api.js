@@ -2,21 +2,29 @@ import axios from 'axios';
 
 const API_KEY = import.meta.env.VITE_PIXABAY_KEY;
 const BASE_URL = 'https://pixabay.com/api/';
+const PER_PAGE = 15;
+
+const api = axios.create({
+  baseURL: BASE_URL,
+  params: {
+    key: API_KEY,
+    image_type: 'photo',
+    orientation: 'horizontal',
+    safesearch: true,
+    per_page: PER_PAGE,
+  },
+});
 
 /**
- * Отримати зображення за пошуковим словом.
- * @param {string} query - рядок пошуку
- * @returns {Promise<Object>} data з відповіді (hits, total, totalHits)
+ * Get images by query and page. Returns `data` from Pixabay response.
+ * @param {string} query
+ * @param {number} page
+ * @returns {Promise<Object>} data
  */
-export async function getImagesByQuery(query) {
-  const { data } = await axios.get(BASE_URL, {
-    params: {
-      key: API_KEY,
-      q: query,
-      image_type: 'photo',
-      orientation: 'horizontal',
-      safesearch: true,
-    },
-  });
+export async function getImagesByQuery(query, page = 1) {
+  const q = (query ?? '').trim();
+  const { data } = await api.get('', { params: { q, page } });
   return data;
 }
+
+export { PER_PAGE };

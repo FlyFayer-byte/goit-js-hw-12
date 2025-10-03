@@ -1,8 +1,10 @@
+// src/js/render-functions.js
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const galleryEl = document.querySelector('#gallery');
 const loaderEl = document.querySelector('#loader');
+const loadMoreBtn = document.querySelector('#load-more');
 
 const lightbox = new SimpleLightbox('.gallery a', {
   captions: true,
@@ -11,11 +13,8 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
-/**
- * Додає в галерею картки зображень і оновлює SimpleLightbox.
- * @param {Array<Object>} images
- */
 export function createGallery(images = []) {
+  if (!images.length) return;
   const markup = images
     .map(
       ({
@@ -57,6 +56,18 @@ export function showLoader() {
 
 export function hideLoader() {
   loaderEl.classList.remove('is-visible');
+}
+
+export function showLoadMoreButton() {
+  if (loadMoreBtn) {
+    loadMoreBtn.hidden = false;
+  }
+}
+
+export function hideLoadMoreButton() {
+  if (loadMoreBtn) {
+    loadMoreBtn.hidden = true;
+  }
 }
 
 function escapeHtml(str = '') {
